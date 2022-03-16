@@ -1,0 +1,28 @@
+{
+  "name": "tank-tactics",
+  "version": "1.0.0",
+  "description": "Discord Bot that runs Tank Tactics",
+  "main": "out/index.js",
+  "scripts": {
+    "build": "tsc --build .",
+    "clean": "tsc --clean .",
+    "start": "node ."
+  },
+  "author": "MAO3J1m0Op",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^4.6.2"
+  },
+  "dependencies": {
+    "discord.js": "^13.6.0",
+    "jimp": "^0.16.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MAO3J1m0Op/Tank-Tactics-Rewrite.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MAO3J1m0Op/Tank-Tactics-Rewrite/issues"
+  },
+  "homepage": "https://github.com/MAO3J1m0Op/Tank-Tactics-Rewrite#readme"
+}

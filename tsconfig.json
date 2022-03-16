@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "outDir": "out",
+        "target": "ES6",
+        "module": "CommonJS",
+        "alwaysStrict": true,
+        "forceConsistentCasingInFileNames": true
+    }
+}
