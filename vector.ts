@@ -31,3 +31,19 @@ export function scaleVector(vector: Vector, scalar: number): Vector {
         y: vector.y * scalar
     }
 }
+
+/**
+ * Returns dimensions for the smallest box that is either N*N or N*(N-1) and has
+ * at minimum the area passed..
+ * @param area the minimum area of the box.
+ */
+export function boxiestBox(area: number): Vector {
+
+    // Square-iest length
+    const N = Math.ceil(Math.sqrt(area))
+
+    // Shave a layer off the box if allowed
+    return (N * (N - 1) > area)
+        ? { x: N, y: N - 1 }
+        : { x: N, y: N }
+}
