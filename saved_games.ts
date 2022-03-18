@@ -111,6 +111,12 @@ export async function archive(game: ActiveGame) {
     await fs.rename(activePath(endedGame), archivePath(endedGame))
 }
 
+export class GameExistsError extends Error {
+    constructor(public existingGame: Game) {
+        super("Cannot create a new game on a channel with an existing game.")
+    }
+}
+
 /**
  * Creates a new game to be managed by the passed TextChannel.
  * @param channel the channel that will manage this game.
@@ -123,6 +129,10 @@ export function newGame(channel: TextChannel, GM: User): Game {
         gameMaster: GM.id,
         players: {},
         jury: []
+    }
+
+    if (loadedGames[channel.id] !== undefined) {
+        throw new GameExistsError(loadedGames[channel.id])
     }
 
     loadedGames[channel.id] = game
