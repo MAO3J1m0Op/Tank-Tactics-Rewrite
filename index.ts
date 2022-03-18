@@ -1,6 +1,7 @@
 import * as discord from 'discord.js'
 import * as dotenv from 'dotenv'
 import * as commands from './commands'
+import * as savedGames from './saved_games'
 
 dotenv.config()
 
@@ -50,4 +51,13 @@ bot.on('interactionCreate', interaction => {
     commands[interaction.commandName]?.call(interaction)
 })
 
+savedGames.reloadActive()
 bot.login(process.env.TOKEN)
+
+function onExit() {
+    console.log('Shutting down.')
+    bot.destroy()
+    savedGames.endAllDailyEmitters()
+}
+
+process.on('SIGINT', onExit)
