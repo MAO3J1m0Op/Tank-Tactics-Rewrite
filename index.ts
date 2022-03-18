@@ -2,6 +2,7 @@ import * as discord from 'discord.js'
 import * as dotenv from 'dotenv'
 import * as commands from './commands'
 import * as savedGames from './saved_games'
+import * as games from './games'
 
 dotenv.config()
 
@@ -47,8 +48,90 @@ bot.on('interactionCreate', interaction => {
 
     if (!interaction.isCommand()) return
 
-    // Call the associated command
-    commands[interaction.commandName]?.call(interaction)
+    // Get the command object
+    const command: commands.Command = commands[interaction.commandName]
+
+    if (!command) return
+    if (command.gameCommandInfo) {
+        // Game commands
+
+        const gameCommand = command as commands.GameCommand
+
+        // Find the game in which the channel was called
+        const game = savedGames.get(interaction.channel as discord.TextChannel)
+
+        // Reply with an error if there is no game for the invoking channel
+        if (!game) {
+            return interaction.reply({
+                content: "That command must be invoked "
+                    + "in a Tank Tactics channel.",
+                ephemeral: true
+            })
+        }
+
+        // Filter based on the channel's focus
+        if (gameCommand.gameCommandInfo.for === 'GM'
+            && !games.userIsGM(game, interaction.user))
+        {
+            return interaction.reply({
+                content: "That command is restricted to the game's GM.",
+                ephemeral: true
+            })
+        }
+        if (games.activeGame(game)
+            && gameCommand.gameCommandInfo.for === 'JUROR'
+            && !games.userIsJuror(game, interaction.user))
+        {
+            return interaction.reply({
+                content: "That command is restricted to the game's jury.",
+                ephemeral: true
+            })
+        }
+        if (games.userIsPlayer(game, interaction.user)) {
+            if (gameCommand.gameCommandInfo.for === 'SPECTATOR') {
+                return interaction.reply({
+                    content: "That command is only for game spectators.",
+                    ephemeral: true
+                })
+            }
+        } else {
+            if (gameCommand.gameCommandInfo.for === 'PLAYER') {
+                return interaction.reply({
+                    content: "That command is only for players in this game.",
+                    ephemeral: true
+                })
+            }
+        }
+
+        // Filter based on the game's phase
+        if (games.activeGame(game)) {
+            if (gameCommand.gameCommandInfo.phase === 'JOINING') {
+                return interaction.reply({
+                    content: "That command isn't useable now, "
+                        + "as the game has already started.",
+                    ephemeral: true
+                })
+            }
+        } else {
+            if (gameCommand.gameCommandInfo.phase === 'ACTIVE') {
+                return interaction.reply({
+                    content: "That command isn't useable now, "
+                        + "as the game has not yet started.",
+                    ephemeral: true
+                })
+            }
+        }
+
+        gameCommand.call(interaction, game)
+
+    } else {
+        // Global commands
+
+        const globalCommand = command as commands.GlobalCommand
+
+        // No additional parsing needs to be done for global commands
+        globalCommand.call(interaction)
+    }
 })
 
 savedGames.reloadActive()
