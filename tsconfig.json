@@ -4,6 +4,8 @@
         "target": "ES6",
         "module": "CommonJS",
         "alwaysStrict": true,
-        "forceConsistentCasingInFileNames": true
+        "forceConsistentCasingInFileNames": true,
+        "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true
     }
 }
