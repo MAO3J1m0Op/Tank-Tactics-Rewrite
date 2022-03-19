@@ -1,0 +1,26 @@
+{
+    "$schema": "./patterns.schema.json",
+    "colors": {
+        "red": "#FF0000",
+        "lime": "#00FF00",
+        "blue": "#0000FF",
+        "yellow": "#FFFF00",
+        "magenta": "#FF00FF",
+        "cyan": "#00FFFF",
+        "green": "#006400",
+        "orange": "#FF7700",
+        "brown": "#964B00",
+        "silver": "#C0C0C0",
+        "grey": "#808080",
+        "teal": "#008080",
+        "purple": "#800080",
+        "gold": "#FFD700"
+    },
+    "patterns": {
+        "checkerboard": "$1/$2 checkerboard",
+        "split_vert": "$1 left; $2 right",
+        "split_horiz": "$1 top; $2 bottom",
+        "split_NW_SE": "$1 top-left; $2 bottom-right",
+        "split_NE_SW": "$1 top-right; $2 bottom-left"
+    }
+}

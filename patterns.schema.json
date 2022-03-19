@@ -1,0 +1,23 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "object",
+    "properties": {
+        "colors": {
+            "description": "List of all colors usable by tanks.",
+            "type": "object",
+            "additionalProperties": {
+                "type": "string",
+                "pattern": "^#[0-9A-F]{6}$",
+                "description": "A hex code for a color."
+            }
+        },
+        "patterns": {
+            "description": "List of all patterns usable by tanks.",
+            "type": "object",
+            "additionalProperties": {
+                "type": "string",
+                "description": "The name of the pattern as described by descriptions."
+            }
+        }
+    }
+}
