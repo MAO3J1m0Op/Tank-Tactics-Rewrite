@@ -1,4 +1,5 @@
 import { User } from 'discord.js'
+import { TankPattern } from './board'
 import { Vector, compare } from './vector'
 
 /**
@@ -7,9 +8,9 @@ import { Vector, compare } from './vector'
  */
 export interface PlayerData {
     /**
-     * Color of the player's tank.
+     * Unique pattern of the player's tank.
      */
-    color: string
+    pattern: TankPattern
 }
 
 /**
