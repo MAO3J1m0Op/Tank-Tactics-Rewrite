@@ -32,6 +32,10 @@ export function scaleVector(vector: Vector, scalar: number): Vector {
     }
 }
 
+export function compare(a: Vector, b: Vector): boolean {
+    return a.x === b.x && a.y === b.y
+}
+
 /**
  * Returns dimensions for the smallest box that is either N*N or N*(N-1) and has
  * at minimum the area passed..
