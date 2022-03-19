@@ -1,5 +1,5 @@
 import { User } from 'discord.js'
-import { Vector } from './vector'
+import { Vector, compare } from './vector'
 
 /**
  * Data for a single player in a game while the game is awaiting players to
@@ -108,4 +108,23 @@ export function userIsGM(game: Game, user: User): boolean {
  */
 export function userIsJuror(game: ActiveGame, user: User): boolean {
     return game.jury.includes(user.id)
+}
+
+/**
+ * Gets the player who is at a specified position.
+ * @param game the game whose board will be checked.
+ * @param position the position to check.
+ * @returns the ID of the player at the specified position, or undefined if the
+ * space is empty.
+ */
+export function tankAt(
+    game: ActiveGame, 
+    position: Vector
+): string | undefined {
+
+    // Find the player with a tank at the position
+    const playerEntry = Object.entries(game.players)
+        .find(entry => compare(entry[1].position, position))
+
+    return playerEntry !== undefined ? playerEntry[0] : undefined
 }
