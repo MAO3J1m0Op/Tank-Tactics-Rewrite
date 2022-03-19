@@ -86,3 +86,6 @@ export const ping: Command = {
         })
     }
 }
+
+import { newGame } from './commands/new_game'
+export const new_game = newGame
