@@ -32,6 +32,17 @@ export function scaleVector(vector: Vector, scalar: number): Vector {
     }
 }
 
+/**
+ * Returns a vector whose X and Y components equal the number passed in.
+ * @param num the number to vectorize.
+ */
+export function vectorize(num: number): Vector {
+    return {
+        x: num,
+        y: num
+    }
+}
+
 export function compare(a: Vector, b: Vector): boolean {
     return a.x === b.x && a.y === b.y
 }
