@@ -192,5 +192,21 @@ type PatternRenderer = (
 ) => void
 
 const patternRenderers: { [pattern in PatternKind]: PatternRenderer } = {
-    // TODO
+    checkerboard: (image, pixelPos, primary, secondary) => {
+        // Find begin, end, and midpoint pixel positions
+        const tileSize = scaleVector(vectorize(cellSizePx), 2)
+        const mid = addVectors(pixelPos, tileSize)
+
+        // Fill each rectangle
+        fillRectangle(image, pixelPos, tileSize, colorCodes[primary])
+        fillRectangle(image, mid, tileSize, colorCodes[primary])
+        fillRectangle(image, { x: pixelPos.x, y: mid.y }, tileSize,
+            colorCodes[secondary])
+        fillRectangle(image, { x: mid.x, y: pixelPos.y }, tileSize,
+            colorCodes[secondary])
+    },
+    split_horiz: () => {},
+    split_vert: () => {},
+    split_NE_SW: () => {},
+    split_NW_SE: () => {},
 }
