@@ -1,7 +1,7 @@
 import Jimp from 'jimp'
 import { access } from 'fs/promises'
 import { colors, patterns as patternNames } from './patterns.json'
-import { addVectors, scaleVector, Vector } from './vector'
+import { addVectors, scaleVector, Vector, vectorize } from './vector'
 import { ActiveGame } from './games'
 
 /**
@@ -119,25 +119,6 @@ export class Board {
     }
 
     /**
-     * Fills a rectangle on the board image with the provided color.
-     * @param position pixel position of the top-left corner of the rectangle.
-     * @param size size of the rectangle in pixels.
-     * @param color CSS-formatted color to use to fill the rectangle.
-     * @returns this, for chaining.
-     */
-    fillRectangle(position: Vector, size: Vector, color: string): this { 
-        const colorHex = Jimp.cssColorToHex(color)
-        this.image = this.image.scan(
-            position.x, position.y,
-            size.x, size.y, 
-            function(x, y, offset) {
-                this.bitmap.data.writeUint32BE(colorHex, offset)
-            }
-        )
-        return this
-    }
-
-    /**
      * Fills a cell with a color.
      * @param cell the cell to fill.
      * @param color the CSS-formatted color to use.
@@ -146,7 +127,8 @@ export class Board {
     fillCell(cell: Vector, color: string): this {
         const pos = scaleVector(cell, cellSizePx + borderWidthPx)
         const size: Vector = { x: cellSizePx, y: cellSizePx }
-        return this.fillRectangle(pos, size, color)
+        fillRectangle(this.image, pos, size, color)
+        return this
     }
 
     /**
@@ -159,7 +141,7 @@ export class Board {
     renderPattern(cell: Vector, pattern?: TankPattern): this {
         const renderer = patternRenderers[pattern.kind]
         const pixelPos = scaleVector(cell, cellSizePx + borderWidthPx)
-        renderer(this, pixelPos, pattern.primary, pattern.secondary)
+        renderer(this.image, pixelPos, pattern.primary, pattern.secondary)
         return this
     }
 
@@ -174,11 +156,33 @@ export class Board {
 }
 
 /**
+ * Fills a rectangle on the provided image with the provided color.
+ * @param position pixel position of the top-left corner of the rectangle.
+ * @param size size of the rectangle in pixels.
+ * @param color CSS-formatted color to use to fill the rectangle.
+ */
+function fillRectangle(
+    image: Jimp,
+    position: Vector,
+    size: Vector,
+    color: string
+): Jimp { 
+    const colorHex = Jimp.cssColorToHex(color)
+    return image.scan(
+        position.x, position.y,
+        size.x, size.y, 
+        function(x, y, offset) {
+            this.bitmap.data.writeUint32BE(colorHex, offset)
+        }
+    )
+}
+
+/**
  * Function that draws the pattern on the board image.
  */
 type PatternRenderer = (
     /** The image on which the pattern will be rendered.*/
-    board: Board,
+    image: Jimp,
     /** Pixel position of the beginning of the cell. */
     pixelPos: Vector,
     /** Primary color of the pattern. */
