@@ -13,6 +13,15 @@ export type Color = keyof typeof colors
  */
 export const colorCodes: { [key in Color]: string } = colors
 
+const colorKeys = Object.keys(colorCodes) as Color[]
+/**
+ * Returns a random color.
+ */
+export function randomColor(): Color {
+    const i = Math.floor(Math.random() * colorKeys.length)
+    return colorKeys[i]
+}
+
 /**
  * All permitted kinds of tank patterns.
  */
@@ -25,6 +34,15 @@ export type PatternKind = keyof typeof patterns
 export const patternNames: { [key in PatternKind]: string } = {}
 for (const patternName in patterns) {
     patternNames[patternName] = patterns[patternName].generic
+}
+
+const patternKeys = Object.keys(patternNames) as PatternKind[]
+/**
+ * Returns a random pattern kind.
+ */
+export function randomPattern(): PatternKind {
+    const i = Math.floor(Math.random() * patternKeys.length)
+    return patternKeys[i]
 }
 
 /**
