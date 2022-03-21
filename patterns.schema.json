@@ -15,8 +15,19 @@
             "description": "List of all patterns usable by tanks.",
             "type": "object",
             "additionalProperties": {
-                "type": "string",
-                "description": "The name of the pattern as described by descriptions."
+                "type": "object",
+                "description": "Display names of the pattern.",
+                "properties": {
+                    "generic": {
+                        "type": "string",
+                        "description": "Describes the pattern."
+                    },
+                    "colored": {
+                        "type": "string",
+                        "description": "Describes the pattern in reference to pattern's colors. Use \"$1\" and \"$2\" to reference the color names."
+                    }
+                },
+                "additionalProperties": false
             }
         }
     }

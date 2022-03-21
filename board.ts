@@ -1,6 +1,6 @@
 import Jimp from 'jimp'
 import { access } from 'fs/promises'
-import { colors, patterns as patternNames } from './patterns.json'
+import { colors, patterns } from './patterns.json'
 import { addVectors, scaleVector, Vector, vectorize } from './vector'
 import { ActiveGame } from './games'
 
@@ -16,7 +16,16 @@ export const colorCodes: { [key in Color]: string } = colors
 /**
  * All permitted kinds of tank patterns.
  */
-export type PatternKind = keyof typeof patternNames
+export type PatternKind = keyof typeof patterns
+
+/**
+ * Map of all permitted pattern names to their lengthier names.
+ */
+// @ts-ignore
+export const patternNames: { [key in PatternKind]: string } = {}
+for (const patternName in patterns) {
+    patternNames[patternName] = patterns[patternName].generic
+}
 
 /**
  * A pattern that uniquely identifies a tank.
@@ -35,7 +44,7 @@ export function coloredPatternName(pattern: TankPattern): string {
     // Solid patterns
     if (pattern.kind === null) return pattern.primary
 
-    return patternNames[pattern.kind]
+    return patterns[pattern.kind].colored
         .replace('$1', pattern.primary)
         .replace('$2', pattern.secondary)
 }
