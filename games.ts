@@ -129,3 +129,19 @@ export function tankAt(
 
     return playerEntry !== undefined ? playerEntry[0] : undefined
 }
+
+/**
+ * Checks if a pattern is unique in a game.
+ * @param game the game to read from.
+ * @param pattern the pattern to check.
+ */
+export function patternIsUnique(game: Game, pattern: TankPattern): boolean {
+
+    const copyingPlayer = Object.values(game.players)
+        .find(player => 
+            pattern.kind === player.pattern.kind
+            && pattern.primary === player.pattern.primary
+            && pattern.secondary === player.pattern.secondary)
+
+    return copyingPlayer === undefined
+}
