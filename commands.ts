@@ -92,3 +92,9 @@ export const new_game = newGame
 
 import { list as listCmd } from './commands/list'
 export const list = listCmd
+
+import { join as joinCmd } from './commands/join'
+export const join = joinCmd
+
+import { leave as leaveCmd } from './commands/leave'
+export const leave = leaveCmd
