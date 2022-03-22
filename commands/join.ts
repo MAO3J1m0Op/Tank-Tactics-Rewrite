@@ -83,7 +83,8 @@ export const join: JoinPhaseGameCommand = {
                     kind: board.randomPattern()
                 }
 
-                if (patternIsUnique(game, pattern)) break
+                if (pattern.primary !== pattern.secondary
+                    && patternIsUnique(game, pattern)) break
             }
 
             // Check if we jumped out of the loop or exhausted it
@@ -116,6 +117,14 @@ export const join: JoinPhaseGameCommand = {
             if (!patternIsUnique(game, pattern)) {
                 return inter.reply({
                     content: "The pattern you chose is already taken.",
+                    ephemeral: true
+                })
+            }
+
+            // And also has two different colors
+            if (pattern.primary === pattern.secondary) {
+                return inter.reply({
+                    content: "Your two colors must be different.",
                     ephemeral: true
                 })
             }
