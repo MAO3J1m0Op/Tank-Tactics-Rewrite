@@ -1,6 +1,6 @@
 import { User } from 'discord.js'
 import { TankPattern } from './board'
-import { Vector, compare } from './vector'
+import Vector, { compare } from './vector'
 
 /**
  * Data for a single player in a game while the game is awaiting players to

@@ -1,7 +1,7 @@
 /**
  * Used for board sizes and positions.
  */
-export interface Vector {
+export default interface Vector {
     x: number
     y: number
 }

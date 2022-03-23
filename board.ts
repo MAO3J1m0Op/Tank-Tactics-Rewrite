@@ -1,7 +1,7 @@
 import Jimp from 'jimp'
 import { access } from 'fs/promises'
 import { colors, patterns } from './patterns.json'
-import { addVectors, scaleVector, Vector, vectorize } from './vector'
+import Vector, { addVectors, scaleVector, vectorize } from './vector'
 import { ActiveGame } from './games'
 
 /**

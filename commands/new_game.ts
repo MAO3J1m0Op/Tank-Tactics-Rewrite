@@ -8,7 +8,7 @@ import { GlobalCommand } from '../commands'
 import { Game } from '../games'
 import * as savedGames from '../saved_games'
 
-export const newGame: GlobalCommand = {
+const newGame: GlobalCommand = {
     info: {
         name: 'new_game',
         description: 'Create a new game of Tank Tactics.',
@@ -112,3 +112,4 @@ async function newGameChannel(inter: CommandInteraction) {
         ephemeral: false
     })
 }
+export default newGame

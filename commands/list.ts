@@ -1,6 +1,6 @@
 import { GameCommand } from '../commands'
 
-export const list: GameCommand = {
+const list: GameCommand = {
     info: {
         name: 'list',
         description: 'List various things about the game of Tank Tactics on this channel.',
@@ -61,3 +61,4 @@ export const list: GameCommand = {
         }
     }
 }
+export default list

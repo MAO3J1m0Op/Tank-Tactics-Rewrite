@@ -21,7 +21,7 @@ const patternChoices = Object.entries(board.patternNames).map(pattern => {
     }
 })
 
-export const join: JoinPhaseGameCommand = {
+const join: JoinPhaseGameCommand = {
     info: {
         name: 'join',
         description: "Invoke in a Tank Tactics channel to join the game.",
@@ -142,3 +142,4 @@ export const join: JoinPhaseGameCommand = {
         })
     }
 }
+export default join

@@ -87,14 +87,7 @@ export const ping: Command = {
     }
 }
 
-import { newGame } from './commands/new_game'
-export const new_game = newGame
-
-import { list as listCmd } from './commands/list'
-export const list = listCmd
-
-import { join as joinCmd } from './commands/join'
-export const join = joinCmd
-
-import { leave as leaveCmd } from './commands/leave'
-export const leave = leaveCmd
+export { default as new_game } from './commands/new_game'
+export { default as list } from './commands/list'
+export { default as join } from './commands/join'
+export { default as leave } from './commands/leave'

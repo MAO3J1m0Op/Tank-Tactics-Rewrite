@@ -1,7 +1,7 @@
 import { GameCommand } from '../commands'
 import { update } from '../saved_games'
 
-export const leave: GameCommand = {
+const leave: GameCommand = {
     info: {
         name: 'leave',
         description: "Quit a game of Tank Tactics."
@@ -20,3 +20,4 @@ export const leave: GameCommand = {
         })
     }
 }
+export default leave
