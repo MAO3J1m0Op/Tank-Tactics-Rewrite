@@ -1,4 +1,4 @@
-import Jimp from 'jimp'
+import * as Jimp from 'jimp'
 import { access } from 'fs/promises'
 import { colors, patterns } from './patterns.json'
 import Vector, { addVectors, scaleVector, vectorize } from './vector'
@@ -152,7 +152,8 @@ export class Board {
      * @returns this, for chaining.
      */
     fillCell(cell: Vector, color: string): this {
-        const pos = scaleVector(cell, cellSizePx + borderWidthPx)
+        let pos = scaleVector(cell, cellSizePx + borderWidthPx)
+        pos = addVectors(pos, vectorize(borderWidthPx))
         const size: Vector = { x: cellSizePx, y: cellSizePx }
         fillRectangle(this.image, pos, size, color)
         return this
@@ -167,7 +168,8 @@ export class Board {
      */
     renderPattern(cell: Vector, pattern?: TankPattern): this {
         const renderer = patternRenderers[pattern.kind]
-        const pixelPos = scaleVector(cell, cellSizePx + borderWidthPx)
+        const pixelPosNoBorder = scaleVector(cell, cellSizePx + borderWidthPx)
+        const pixelPos = addVectors(pixelPosNoBorder, vectorize(borderWidthPx))
         renderer(this.image, pixelPos, pattern.primary, pattern.secondary)
         return this
     }
@@ -221,7 +223,7 @@ type PatternRenderer = (
 const patternRenderers: { [pattern in PatternKind]: PatternRenderer } = {
     checkerboard: (image, pixelPos, primary, secondary) => {
         // Find begin, end, and midpoint pixel positions
-        const tileSize = scaleVector(vectorize(cellSizePx), 2)
+        const tileSize = scaleVector(vectorize(cellSizePx), 0.5)
         const mid = addVectors(pixelPos, tileSize)
 
         // Fill each rectangle

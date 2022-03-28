@@ -238,8 +238,8 @@ export class Game implements GameData {
             player.playerObj.health = options.startingHealth || 3
     
             const posInSpawnBox: Vector = {
-                x: Math.random() * options.spawnBoxSize,
-                y: Math.random() * options.spawnBoxSize
+                x: Math.floor(Math.random() * options.spawnBoxSize),
+                y: Math.floor(Math.random() * options.spawnBoxSize)
             }
             // Position of the spawn box start on the board
             const spawnBoxStartPos = vector.scaleVector(

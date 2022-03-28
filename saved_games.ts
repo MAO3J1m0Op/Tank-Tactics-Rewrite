@@ -39,6 +39,9 @@ export async function reloadActive() {
     // Use map to capture the promise associated with reading in the files
     const readPromises = activeGameFiles.map(async fileName => {
 
+        // Skip non-JSON files
+        if (!fileName.endsWith('.json')) return
+
         // Strip the file extension from the channel ID
         const channelId = fileName.slice(0, -5)
 
