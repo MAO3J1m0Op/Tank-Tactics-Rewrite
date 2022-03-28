@@ -105,7 +105,7 @@ async function newGameChannel(inter: CommandInteraction) {
 
     // Make a new game
     const game = savedGames.newGame(newChannel, inter.user)
-    await savedGames.update(game)
+    await game.update()
 
     inter.reply({
         content: `Created a new Tank Tactics game on ${newChannel}!`,

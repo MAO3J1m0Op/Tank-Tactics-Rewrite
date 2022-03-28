@@ -1,20 +1,10 @@
 import { TextChannel, User } from 'discord.js'
+import { Game, ActiveGame, GameStartOptions } from './games'
 import * as fs from 'fs/promises'
-
-import { DailyEmitter } from './daily_emitter'
-import { ActiveGame, Game } from './games'
 
 let loadedGames: {
     [channelId: string]: Game
 } = {}
-
-/**
- * Gets the path to a file for a game.
- * @param game game for which the file path will be obtained.
- */
-function activePath(game: Game): string {
-    return `./data/active/${game.channelId}.json`
-}
 
 /**
  * Gets the path to a file for an archived game.
@@ -33,13 +23,13 @@ export async function reloadActive() {
     endAllDailyEmitters()
     loadedGames = {}
 
-    // Determine the contents of ./data/active
-    const activeGameFiles = await fs.readdir('./data/active')
+    // Determine the contents of the game path
+    const activeGameFiles = await fs.readdir(Game.rootPath)
 
         .catch(async err => {
 
-            // If the /data/active folder doesn't exist, make it
-            await fs.mkdir('./data/active', { recursive: true })
+            // If the game path folder doesn't exist, make it
+            await fs.mkdir(Game.rootPath, { recursive: true })
 
             // The folder is empty
             return [] as string[]
@@ -52,10 +42,10 @@ export async function reloadActive() {
         // Strip the file extension from the channel ID
         const channelId = fileName.slice(0, -5)
 
-        const data = await fs.readFile(
-            `./data/active/${fileName}`, { encoding: 'utf8' }
-        )
-        const game: Game = JSON.parse(data)
+        // Load in the data
+        const game = await Game.load(channelId)
+
+        // Add the game to the cache
         loadedGames[channelId] = game
     })
 
@@ -67,19 +57,8 @@ export async function reloadActive() {
  * Gets a game object managed by the guild and channel passed.
  * @param channel the channel that manages this game.
  */
-export function get(channel: TextChannel): Game {
-    return loadedGames[channel.id]
-}
-
-/**
- * Updates the file corresponding to this game instance.
- * @param game the game instance to update.
- */
-export async function update(game: Game) {
-    fs.writeFile(
-        activePath(game),
-        JSON.stringify(game, null, 4)
-    )
+export function get(channelId: string): Game {
+    return loadedGames[channelId]
 }
 
 /**
@@ -100,15 +79,15 @@ interface EndedGame extends ActiveGame {
 export async function archive(game: ActiveGame) {
 
     // Stop the emitter
-    endDailyEmitter(game)
+    game.endDailyEmitter()
     
     // Specify the end date
     const endedGame = game as EndedGame
     endedGame.endDate = new Date().toString()
 
     // Update the game and move it to the archive folder
-    await update(endedGame)
-    await fs.rename(activePath(endedGame), archivePath(endedGame))
+    await endedGame.update()
+    await fs.rename(endedGame.activePath(), archivePath(endedGame))
 }
 
 export class GameExistsError extends Error {
@@ -124,12 +103,9 @@ export class GameExistsError extends Error {
  */
 export function newGame(channel: TextChannel, GM: User): Game {
 
-    const game: Game = {
-        channelId: channel.id,
-        gameMaster: GM.id,
-        players: {},
-        jury: []
-    }
+    const game = new Game()
+    game.channelId = channel.id
+    game.gameMaster = GM.id
 
     if (loadedGames[channel.id] !== undefined) {
         throw new GameExistsError(loadedGames[channel.id])
@@ -140,35 +116,27 @@ export function newGame(channel: TextChannel, GM: User): Game {
     return game
 }
 
-let dailyEmitters: {
-    [channelId: string]: DailyEmitter
-} = {}
-
 /**
- * Starts a daily emitter for a certain game.
- * @param game the game for which the emitter will be started.
+ * Starts the game of the specified ID, updating the cache to be the newly
+ * created ActiveGame instance.
+ * @param channelId the ID of the channel whose game will be started.
  */
-export function startDailyEmitter(game: ActiveGame) {
-    dailyEmitters[game.channelId] = new DailyEmitter()
-}
-
-/**
- * Ends a daily emitter for a certain game.
- * @param game the game whose emitter will be ended.
- */
-function endDailyEmitter(game: ActiveGame) {
-    const emitter = dailyEmitters[game.channelId]
-    if (emitter) emitter.close()
-    dailyEmitters[game.channelId] = undefined
+export function startGame(
+    channelId: string,
+    options: GameStartOptions
+): ActiveGame {
+    const newGame = get(channelId).start(options)
+    loadedGames[channelId] = newGame
+    return newGame
 }
 
 /**
  * Ends all the daily emitters for this instance.
  */
 export function endAllDailyEmitters() {
-    for (const channelId in dailyEmitters) {
-        const emitter = dailyEmitters[channelId];
-        emitter.close()
+    for (const channelId in loadedGames) {
+        const game = loadedGames[channelId]
+        if (!(game instanceof ActiveGame)) continue
+        game.endDailyEmitter()
     }
-    dailyEmitters = {}
 }

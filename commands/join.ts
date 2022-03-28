@@ -1,7 +1,5 @@
 import * as board from '../board'
 import { JoinPhaseGameCommand } from '../commands'
-import { patternIsUnique } from '../games'
-import { update } from '../saved_games'
 
 // All color choices
 const colorChoices = Object.keys(board.colorCodes).map(color => {
@@ -84,7 +82,7 @@ const join: JoinPhaseGameCommand = {
                 }
 
                 if (pattern.primary !== pattern.secondary
-                    && patternIsUnique(game, pattern)) break
+                    && game.patternIsUnique(pattern)) break
             }
 
             // Check if we jumped out of the loop or exhausted it
@@ -114,7 +112,7 @@ const join: JoinPhaseGameCommand = {
             }
 
             // Ensure the provided pattern is unique
-            if (!patternIsUnique(game, pattern)) {
+            if (!game.patternIsUnique(pattern)) {
                 return inter.reply({
                     content: "The pattern you chose is already taken.",
                     ephemeral: true
@@ -134,7 +132,7 @@ const join: JoinPhaseGameCommand = {
         game.players[inter.user.id] = {
             pattern: pattern
         }
-        await update(game)
+        await game.update()
 
         return inter.reply({
             content: `Welcome to the game, ${inter.user}!`,

@@ -1,8 +1,8 @@
 import * as discord from 'discord.js'
 import * as dotenv from 'dotenv'
 import * as commands from './commands'
+import { ActiveGame } from './games'
 import * as savedGames from './saved_games'
-import * as games from './games'
 
 dotenv.config()
 
@@ -58,7 +58,7 @@ bot.on('interactionCreate', interaction => {
         const gameCommand = command as commands.GameCommand
 
         // Find the game in which the channel was called
-        const game = savedGames.get(interaction.channel as discord.TextChannel)
+        const game = savedGames.get(interaction.channel.id)
 
         // Reply with an error if there is no game for the invoking channel
         if (!game) {
@@ -71,23 +71,23 @@ bot.on('interactionCreate', interaction => {
 
         // Filter based on the channel's focus
         if (gameCommand.gameCommandInfo.for === 'GM'
-            && !games.userIsGM(game, interaction.user))
+            && !game.userIsGM(interaction.user))
         {
             return interaction.reply({
                 content: "That command is restricted to the game's GM.",
                 ephemeral: true
             })
         }
-        if (games.activeGame(game)
+        if (game instanceof ActiveGame
             && gameCommand.gameCommandInfo.for === 'JUROR'
-            && !games.userIsJuror(game, interaction.user))
+            && !game.userIsJuror(interaction.user))
         {
             return interaction.reply({
                 content: "That command is restricted to the game's jury.",
                 ephemeral: true
             })
         }
-        if (games.userIsPlayer(game, interaction.user)) {
+        if (game.userIsPlayer(interaction.user)) {
             if (gameCommand.gameCommandInfo.for === 'SPECTATOR') {
                 return interaction.reply({
                     content: "That command is only for game spectators.",
@@ -104,7 +104,7 @@ bot.on('interactionCreate', interaction => {
         }
 
         // Filter based on the game's phase
-        if (games.activeGame(game)) {
+        if (game instanceof ActiveGame) {
             if (gameCommand.gameCommandInfo.phase === 'JOINING') {
                 return interaction.reply({
                     content: "That command isn't useable now, "

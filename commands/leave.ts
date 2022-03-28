@@ -1,5 +1,4 @@
 import { GameCommand } from '../commands'
-import { update } from '../saved_games'
 
 const leave: GameCommand = {
     info: {
@@ -12,7 +11,7 @@ const leave: GameCommand = {
     call: async (inter, game) => {
 
         delete game.players[inter.user.id]
-        await update(game)
+        await game.update()
 
         return inter.reply({
             content: "Sorry to see you go!",
